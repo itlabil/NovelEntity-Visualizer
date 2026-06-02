@@ -6,12 +6,40 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class Entity extends Model
 {
     use HasUlids; // Mengaktifkan fitur ULID otomatis
 
-    protected $fillable = ['novel_id', 'main_name', 'type', 'image_url', 'description'];
+    protected $fillable = ['novel_id', 'main_name', 'type', 'image_url'];
+
+    protected static function booted(): void
+    {
+        // 2. TRIGGER SAAT DATA DISIMPAN / DIUPDATE (Termasuk saat ganti status approved/rejected)
+        static::saved(function ($entity) {
+            static::clearNovelCache($entity);
+        });
+
+        // 3. TRIGGER SAAT DATA DIHAPUS
+        static::deleted(function ($entity) {
+            static::clearNovelCache($entity);
+        });
+    }
+
+    protected static function clearNovelCache($entity): void
+    {
+        // Pastikan relasi ke novel ada untuk mengambil slug-nya
+        if ($entity->novel) {
+            $novelSlug = $entity->novel->slug;
+
+            // Hapus cache untuk semua locale bahasa (id dan en)
+            Cache::forget("novel_keywords_{$novelSlug}_id");
+            Cache::forget("novel_keywords_{$novelSlug}_en");
+            
+            \Log::info("Cache untuk novel {$novelSlug} berhasil dibersihkan otomatis karena ada perubahan data.");
+        }
+    }
 
     /**
      * Relasi: Setiap entitas ini dimiliki oleh satu novel tertentu

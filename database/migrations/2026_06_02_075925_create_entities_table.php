@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('type'); // Isi: 'character', 'item', atau 'place'
             $table->string('gender')->nullable();
             $table->string('image_url'); // URL gambar objek/karakter
-            $table->text('description')->nullable();
             $table->string('display_aliases')->nullable();
             $table->timestamps();
         });

@@ -70,7 +70,11 @@ class EntityController extends Controller
             return \App\Models\EntityAlias::whereHas('entity.novel', function ($query) use ($novelSlug) {
                 $query->where('slug', $novelSlug);
             })
-            ->with(['entity.translations']) // Ambil data translasi
+            ->whereHas('entity', function ($query) {
+                // KUNCI: Ekstensi hanya mengambil data yang sudah disetujui oleh Admin Utama!
+                $query->where('status', 'approved'); 
+            })
+            ->with(['entity.translations'])
             ->get()
             ->map(function ($alias) use ($locale) {
                 $entity = $alias->entity;
