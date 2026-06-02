@@ -17,7 +17,8 @@ class NovelDataSeeder extends Seeder
     {
         $novel = Novel::create([
             'title' => 'Myst, Might, Mayhem',
-            'slug' => 'myst-might-mayhem'
+            'slug' => 'myst-might-mayhem',
+            'status' => 'approved' // <-- SET STATUS APPROVED LANGSUNG,
         ]);
 
         // Buat Karakter Utama dengan GENDER 'male'
@@ -28,6 +29,7 @@ class NovelDataSeeder extends Seeder
             'gender' => 'male', // <-- TAMBAH GENDER
             'image_url' => 'https://static.wikia.nocookie.net/myst-might-mayhem/images/e/e2/Transformation.png',
             'display_aliases' => 'Jeong, Cheon Ma, Heavenly Demon',
+            'status' => 'approved' // <-- SET STATUS APPROVED LANGSUNG,
         ]);
 
         // ISI TRANSLASI MULTI-BAHASA

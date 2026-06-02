@@ -15,6 +15,8 @@ return new class extends Migration
             $table->ulid('id')->primary(); // Mengubah ID standar menjadi ULID
             $table->string('title');
             $table->string('slug')->unique();
+            $table->string('status')->default('pending'); // pending, approved, rejected
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }

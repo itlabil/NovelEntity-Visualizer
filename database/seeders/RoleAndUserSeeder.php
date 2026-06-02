@@ -14,29 +14,31 @@ class RoleAndUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Reset cache permission bawaan spatie
+        // 1. Reset cache permission bawaan spatie agar tidak menyangkut data lama
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 1. BUAT LIST HAK AKSES (PERMISSIONS)
-        Permission::create(['name' => 'manage all data']); // Akses penuh
-        Permission::create(['name' => 'contribute data']); // Hanya bisa tambah data (butuh review)
+        // 2. BUAT LIST HAK AKSES (PERMISSIONS) DENGAN MENENTUKAN GUARD SECARA TEGAS
+        $manageAll = Permission::findOrCreate('manage all data', 'api');
+        $contributeData = Permission::findOrCreate('contribute data', 'api');
 
-        // 2. BUAT ROLE & PASANG HAK AKSESNYA
-        $adminRole = Role::create(['name' => 'administrator']);
-        $adminRole->givePermissionTo('manage all data');
+        // 3. BUAT ROLE & PASANG HAK AKSESNYA
+        $adminRole = Role::findOrCreate('administrator', 'api');
+        // Langsung sinkronisasikan objek permission-nya, bukan string-nya saja
+        $adminRole->givePermissionTo($manageAll);
 
-        $contributorRole = Role::create(['name' => 'contributor']);
-        $contributorRole->givePermissionTo('contribute data');
+        $contributorRole = Role::findOrCreate('contributor', 'api');
+        $contributorRole->givePermissionTo($contributeData);
 
-        // 3. BUAT AKUN UTAMA KAMUS (ADMINISTRATOR FULL AKSES)
+        // 4. BUAT AKUN UTAMA KAMUS (ADMINISTRATOR FULL AKSES)
         $admin = User::create([
-            'name' => 'Ironist08 Admin',
+            'name' => 'Administrator',
             'email' => 'admin@sourcemedia.id',
             'password' => bcrypt('cuma1sampai9'),
         ]);
+        // Pastikan Spatie tahu kita pasang role untuk guard api
         $admin->assignRole($adminRole);
 
-        // 4. BUAT AKUN BIASA (KONTRIBUTOR / AKUN BANTU)
+        // 5. BUAT AKUN BIASA (KONTRIBUTOR / AKUN BANTU)
         $helper = User::create([
             'name' => 'Helper',
             'email' => 'helper@sourcemedia.id',
