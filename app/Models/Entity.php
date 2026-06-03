@@ -12,7 +12,16 @@ class Entity extends Model
 {
     use HasUlids; // Mengaktifkan fitur ULID otomatis
 
-    protected $fillable = ['novel_id', 'main_name', 'type', 'image_url', 'status', 'user_id'];
+    protected $fillable = [
+        'novel_id',
+        'main_name',
+        'type',
+        'gender',
+        'image_url',
+        'display_aliases',
+        'status',
+        'user_id'
+    ];
 
     protected static function booted(): void
     {

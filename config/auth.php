@@ -16,7 +16,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'web',
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -43,8 +43,9 @@ return [
             'provider' => 'users',
         ],
         'api' => [
-            'driver' => 'jwt',
+            'driver' => 'token', // <--- Kembalikan ke 'token' bawaan Laravel
             'provider' => 'users',
+            'hash' => false,
         ],
     ],
 
