@@ -30,6 +30,13 @@
                 Dashboard
             </a>
 
+            @if(auth()->user()->can('novels.index'))
+                <a href="/account/novels" @click="$store.mobileMenuOpen = false" class="flex items-center px-3 py-2 {{ request()->is('account/novels*') ? 'text-primary bg-primary/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }} rounded-lg font-medium">
+                    <x-icons.book width="20" height="20" class="mr-3" />
+                    Novels
+                </a>
+            @endif
+
             @if(auth()->user()->can('users.index') || 
                 auth()->user()->can('roles.index') || 
                 auth()->user()->can('permissions.index'))

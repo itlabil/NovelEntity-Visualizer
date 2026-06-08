@@ -10,6 +10,8 @@ class EntityAlias extends Model
 {
     use HasUlids; // Mengaktifkan fitur ULID otomatis
 
+    protected $touches = ['entity'];
+    
     protected $fillable = ['entity_id', 'alias_name'];
 
     /**
@@ -17,6 +19,6 @@ class EntityAlias extends Model
      */
     public function entity(): BelongsTo
     {
-        return $this->belongsTo(Entity::class);
+        return $this->belongsTo(Entity::class, 'entity_id', 'id');
     }
 }

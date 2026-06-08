@@ -7,6 +7,8 @@ use App\Http\Resources\Api\EntityResource;
 use App\Services\EntityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use App\Models\EntityAlias;
 
 class EntityController extends Controller
 {
@@ -53,25 +55,27 @@ class EntityController extends Controller
 
     /**
      * Endpoint untuk mengambil SEMUA alias dari satu novel tertentu (Untuk Auto-Scanner)
-     */
+    * Endpoint untuk mengambil SEMUA alias dari satu novel tertentu (Untuk Auto-Scanner)
+    */
     public function getAllAliases(Request $request): JsonResponse
     {
         $novelSlug = $request->query('novel_slug');
-        $locale = $request->query('locale', 'en'); // Default ke 'en' jika ekstensi tidak mengirim data locale
+        $locale = $request->query('locale', 'en'); 
 
         if (!$novelSlug) {
             return response()->json(['status' => 'error', 'message' => 'Missing parameter'], 400);
         }
 
-        // Kita masukkan locale ke dalam nama cache agar cache antar bahasa tidak tertukar
-        $cacheKey = "novel:aliases:{$novelSlug}:{$locale}";
+        // 🌟 KUNCI: Samakan format key cache dengan yang akan dihapus oleh Model Observer/Hooks!
+        $cacheKey = "novel_keywords_{$novelSlug}_{$locale}";
         
-        $aliases = \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addDay(), function () use ($novelSlug, $locale) {
-            return \App\Models\EntityAlias::whereHas('entity.novel', function ($query) use ($novelSlug) {
-                $query->where('slug', $novelSlug);
+        $aliases = Cache::remember($cacheKey, now()->addDay(), function () use ($novelSlug, $locale) {
+            return EntityAlias::whereHas('entity.novel', function ($query) use ($novelSlug) {
+                // 🔒 PROTEKSI 1: Novel WAJIB berstatus approved!
+                $query->where('slug', $novelSlug)->where('status', 'approved');
             })
             ->whereHas('entity', function ($query) {
-                // KUNCI: Ekstensi hanya mengambil data yang sudah disetujui oleh Admin Utama!
+                // 🔒 PROTEKSI 2: Entity juga WAJIB berstatus approved!
                 $query->where('status', 'approved'); 
             })
             ->with(['entity.translations'])
@@ -79,10 +83,8 @@ class EntityController extends Controller
             ->map(function ($alias) use ($locale) {
                 $entity = $alias->entity;
                 
-                // Ambil deskripsi berdasarkan bahasa pilihan user
                 $description = $entity->getDescriptionByLocale($locale);
 
-                // Melokalisasi Teks Tipe (Type) agar menyesuaikan bahasa
                 $translatedType = $entity->type;
                 if ($locale === 'id') {
                     if ($entity->type === 'character') $translatedType = 'Karakter';
@@ -93,10 +95,10 @@ class EntityController extends Controller
                 return [
                     'keyword'         => $alias->alias_name,
                     'main_name'       => $entity->main_name,
-                    'type'            => $translatedType, // Sudah diterjemahkan!
-                    'gender'          => $entity->gender, // Menyertakan data gender
+                    'type'            => $translatedType, 
+                    'gender'          => $entity->gender, 
                     'image_url'       => $entity->image_url,
-                    'description'     => $description, // Sudah diterjemahkan!
+                    'description'     => $description, 
                     'display_aliases' => $entity->display_aliases, 
                 ];
             });

@@ -27,11 +27,17 @@
                 <!-- Desktop Navigation Links with Icons -->
                 <div class="hidden lg:ml-10 lg:flex lg:space-x-3 ">
 
-
                     <a href="/account/dashboard" class="{{ request()->is('account/dashboard*') ? 'text-primary' : '' }} text-gray-500 px-1 pt-2 pb-2 text-sm font-medium flex items-center space-x-2">
                         <x-icons.home width="20" height="20" />
                         <span>Dashboard</span>
                     </a>
+
+                    @if(auth()->user()->can('novels.index'))
+                        <a href="/account/novels" class="{{ request()->is('account/novels*') ? 'text-primary' : '' }} text-gray-500 px-1 pt-2 pb-2 text-sm font-medium flex items-center space-x-2">
+                            <x-icons.book width="20" height="20" />
+                            <span>Novels</span>
+                        </a>
+                    @endif
 
                     @if(auth()->user()->can('users.index') || 
                         auth()->user()->can('roles.index') || 
