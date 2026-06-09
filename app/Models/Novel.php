@@ -11,7 +11,7 @@ class Novel extends Model
 {
     use HasUlids; // Memberitahu Laravel bahwa model ini otomatis pakai ULID
 
-    protected $fillable = ['title', 'slug','status','user_id']; // Tambahkan 'status' dan 'user_id' ke fillable
+    protected $fillable = ['title', 'slug','type','status','user_id']; // Tambahkan 'status' dan 'user_id' ke fillable
 
     protected static function booted(): void
     {

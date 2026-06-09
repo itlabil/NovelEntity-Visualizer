@@ -31,6 +31,20 @@
                         <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Type</label>
+                        <select name="type" class="mt-1 block w-full border border-gray-300 @error('type') border-red-500 @enderror rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
+                            <option value="manga" {{ old('type') == 'manga' ? 'selected' : '' }}>Manga</option>
+                            <option value="manhwa" {{ old('type') == 'manhwa' ? 'selected' : '' }}>Manhwa</option>
+                            <option value="manhua" {{ old('type') == 'manhua' ? 'selected' : '' }}>Manhua</option>
+                            <option value="other" {{ old('type') == 'other' ? 'selected' : '' }}>Other</option>
+                        </select>
+                        @error('type')
+                        <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                 </div>
 
                 <div class="mt-6 flex justify-start">

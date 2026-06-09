@@ -34,6 +34,16 @@ class NovelController extends Controller implements HasMiddleware
                     ->addColumn('checkbox', function ($row) {
                         return '<input type="checkbox" value="' . $row->id . '" class="novel-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">';
                     })
+                    ->addColumn('type', function ($row) {
+                        $typeColors = [
+                            'manga' => 'bg-blue-100 text-blue-800',
+                            'manhwa' => 'bg-green-100 text-green-800',
+                            'manhua' => 'bg-yellow-100 text-yellow-800',
+                            'other' => 'bg-gray-100 text-gray-800',
+                        ];
+                        $colorClass = $typeColors[$row->type] ?? 'bg-gray-100 text-gray-800';
+                        return '<span class="px-2 py-1 rounded-full text-xs font-semibold ' . $colorClass . '">' . ucfirst($row->type) . '</span>';
+                    })
                     ->addColumn('status', function ($row) {
                         $statusColors = [
                             'approved' => 'bg-green-100 text-green-800',
@@ -49,7 +59,7 @@ class NovelController extends Controller implements HasMiddleware
                     ->addColumn('action', function ($row) {
                         return view('account.novels.action')->with("novel", $row);
                     })
-                    ->rawColumns(['checkbox', 'status', 'author', 'action']) 
+                    ->rawColumns(['checkbox', 'type', 'status', 'author', 'action']) 
                     ->make(true);
         }
 
@@ -102,6 +112,7 @@ class NovelController extends Controller implements HasMiddleware
         //validate request
         $request->validate([
             'title' => 'required|string|max:255|unique:novels,title',
+            'type'  => 'required|in:manga,manhwa,manhua,other',
         ]);
 
         $user = auth()->user();
@@ -111,6 +122,7 @@ class NovelController extends Controller implements HasMiddleware
         Novel::create([
             'title'   => $request->title,
             'slug'    => Str::slug($request->title, '-'),
+            'type'    => $request->type,
             'status'  => $status, 
             'user_id' => $user->id,
         ]);
@@ -135,6 +147,7 @@ class NovelController extends Controller implements HasMiddleware
     {
         $request->validate([
             'title' => 'required|string|max:255|unique:novels,title,' . $novel->id,
+            'type'  => 'required|in:manga,manhwa,manhua,other',
         ]);
 
         $user = auth()->user();
@@ -149,6 +162,7 @@ class NovelController extends Controller implements HasMiddleware
         $novel->update([
             'title'  => $request->title,
             'slug'   => Str::slug($request->title, '-'),
+            'type'   => $request->type,
             'status' => $status,
         ]);
 

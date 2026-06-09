@@ -31,6 +31,18 @@
                     </div>
 
                     <div>
+                        <label class="block text-sm font-medium text-gray-700">Type</label>
+                        <select name="type" class="mt-1 block w-full border border-gray-300 @error('type') border-red-500 @enderror rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
+                            <option value="manga" {{ old('type', $novel->type) == 'manga' ? 'selected' : '' }}>Manga</option>
+                            <option value="manhwa" {{ old('type', $novel->type) == 'manhwa' ? 'selected' : '' }}>Manhwa</option>
+                            <option value="manhua" {{ old('type', $novel->type) == 'manhua' ? 'selected' : '' }}>Manhua</option>
+                            <option value="other" {{ old('type', $novel->type) == 'other' ? 'selected' : '' }}>Other</option>
+                        </select>
+                        @error('type')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
+
+                    <div>
                         <label class="block text-sm font-medium text-gray-700">Status</label>
                         <select name="status" class="mt-1 block w-full border border-gray-300 @error('status') border-red-500 @enderror rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
                             <option value="approved" {{ old('status', $novel->status) == 'approved' ? 'selected' : '' }}>Approved</option>

@@ -13,6 +13,11 @@
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                 <div class="flex items-center space-x-1">
+                    <span>Type</span>
+                </div>
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                <div class="flex items-center space-x-1">
                     <span>Status</span>
                 </div>
             </th>
@@ -41,6 +46,7 @@
                 // Ganti DT_RowIndex dengan checkbox
                 { data: 'checkbox', name: 'checkbox', orderable: false, searchable: false, className: 'px-6 py-4 whitespace-nowrap' },
                 { data: 'title', name: 'title', className: 'px-6 py-4'},
+                { data: 'type', name: 'type', className: 'px-6 py-4'},
                 { data: 'status', name: 'status', className: 'px-6 py-4'},
                 { data: 'author', name: 'author', className: 'px-6 py-4'},
                 { data: 'action', name: 'action', orderable: false, searchable: false, className: 'px-6 py-4 w-px whitespace-nowrap'},

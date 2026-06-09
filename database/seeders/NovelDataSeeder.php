@@ -6,6 +6,7 @@ use App\Models\EntityTranslation;
 use App\Models\Novel;
 use App\Models\Entity;
 use App\Models\EntityAlias;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class NovelDataSeeder extends Seeder
@@ -15,16 +16,19 @@ class NovelDataSeeder extends Seeder
      */
     public function run(): void
     {
+        $user = User::first(); // Ambil user pertama sebagai author
         $novel = Novel::create([
             'title' => 'Myst, Might, Mayhem',
             'slug' => 'myst-might-mayhem',
-            'status' => 'approved' // <-- SET STATUS APPROVED LANGSUNG,
+            'type' => 'manhwa',
+            'status' => 'approved',
+            'user_id' => $user->id,
         ]);
 
         // Buat Karakter Utama dengan GENDER 'male'
         $char = Entity::create([
             'novel_id' => $novel->id,
-            'main_name' => 'Mok Gyeongun',
+            'main_name' => 'Mok Gyeong-un',
             'type' => 'character',
             'gender' => 'male', // <-- TAMBAH GENDER
             'image_url' => 'https://static.wikia.nocookie.net/myst-might-mayhem/images/e/e2/Transformation.png',
@@ -49,6 +53,7 @@ class NovelDataSeeder extends Seeder
 
         // Pemicu Keyword Scan (Semua bahasa digabung di sini agar terdeteksi semua)
         EntityAlias::create(['entity_id' => $char->id, 'alias_name' => 'Jeong']);
+        EntityAlias::create(['entity_id' => $char->id, 'alias_name' => 'Mok Gyeong-un']);
         EntityAlias::create(['entity_id' => $char->id, 'alias_name' => 'Mok Gyeongun']);
         EntityAlias::create(['entity_id' => $char->id, 'alias_name' => 'Iblis Langit']);
         EntityAlias::create(['entity_id' => $char->id, 'alias_name' => 'Mok Gyeong-un']);
